@@ -29,8 +29,7 @@ def localisation():
   t = ts.utc(int(yearentry.get()), int(monthentry.get()), float(dayentry.get()), float(hoursentry.get()), float(minutentry.get()), float(secondentry.get()))   # datetime selection
   # TLE twoline dbase
   line1,line2=parsedData[satelliteselector.get()]
-
-  loc = Topos(latentry.get(), logentry.get())    # location coords
+  loc = Topos(latentry.get(), logentry.get(), elevation_m=altentry.get())    # location coords
   satellite = EarthSatellite(line1, line2)
 
   # Geocentric
@@ -50,8 +49,8 @@ def localisation():
   topocentric = difference.at(t)
   geocentric = satellite.at(t)
   # ------ Start outputs -----------
-  print ('\n Heures locale', timestring)
-  print (' Temps Solaire: ',t)
+  print ('\n Heures locale :', timestring)
+  # print (' Temps Solaire : ',t) pb
   print ('',loc)
   print ('\n Subpoint Longitude= ', longitude )
   print (' Subpoint Latitude = ', latitude )
@@ -75,16 +74,7 @@ def localisation():
   print(' topocentrique (rho): ',topocentric.position.km,'km')
   print(' -----------------')
   print('    Geocentrique (r): ',geocentric.position.km,'km')
-  #
-  # ------ Step 4: sat equatorial coordinates roundoff 3 decimals  --------
-  sho1= around(topoc.position.km, decimals=3)
-  sho2= around(topocentric.position.km, decimals=3)
-  sho3= around(geocentric.position.km, decimals=3)
-  print ('\n Arrondi du vecteur définissant la position du satellite: r = R + rho')
-  print('    Obs. posit.(R): ',sho1,'km')
-  print(' Topocentrique (rho): ',sho2,'km')
-  print(' -----------------')
-  print('    Geocentrique (r): ',sho3,'km')
+
   # EOF: ----- fullsat.py ---------
 
 
@@ -131,15 +121,21 @@ root.geometry("700x300")
 root.resizable(height="false",width="false")
 root.configure(bg="#151e3b")
 
+base = ttk.Style()
+
+base.theme_create('base', parent='alt',settings ={'TCombobox':{'configure':{'foreground': '#ff2424','fieldbackground': '#0d1224'}}})
+
+base.theme_use('base')
+
 temps = tk.LabelFrame(root,text="Horaire",bg="#151e3b",fg="#ff2424", relief="solid",width="340",height="140",font=("Helvetica", 12))
 # temps.grid_propagate(0)
 temps.grid(row=0,column=0)
 
 datelabel = tk.LabelFrame(temps,text="Date de l'observation",bg="#151e3b",fg="#ff2424", relief="solid",font=("Helvetica", 11))
-datelabel.grid(column=0,row=0)
+datelabel.grid(column=0,row=0,padx=5, pady=5)
 
 hourslabel = tk.LabelFrame(temps,text="Heure de l'observation",bg="#151e3b",fg="#ff2424", relief="solid",font=("Helvetica", 11))
-hourslabel.grid(column=1,row=0)
+hourslabel.grid(column=1,row=0,padx=5, pady=5)
 
 tlelabel = tk.LabelFrame(root,text="TLE du satellite à observer",bg="#151e3b",fg="#ff2424", relief="solid",width="690",height="140",font=("Helvetica", 12))
 # tlelabel.grid_propagate(0)
@@ -147,30 +143,30 @@ tlelabel.grid(row=1,column=0,columnspan=2)
 
 positionlabel = tk.LabelFrame(root,text="Position de l'observateur",bg="#151e3b",fg="#ff2424", relief="solid",font=("Helvetica", 11),height="140",width="340")
 # positionlabel.grid_propagate(0)
-positionlabel.grid(column=1,row=0)
+positionlabel.grid(column=1,row=0,ipadx=5, ipady=5)
 
 
-yearentry= tk.Entry(datelabel, width="6",justify="center",bg="#151e3b",fg="#ff2424",font=("Helvetica", 12))
+yearentry= tk.Entry(datelabel, width="6",justify="center",bg="#0d1224",fg="#ff2424",font=("Helvetica", 12))
 yearentry.grid(column=0,row=0)
 yearentry.insert(0,"AAAA")
 
-monthentry= tk.Entry(datelabel, width="4",justify="center",bg="#151e3b",fg="#ff2424",font=("Helvetica", 12))
+monthentry= tk.Entry(datelabel, width="4",justify="center",bg="#0d1224",fg="#ff2424",font=("Helvetica", 12))
 monthentry.grid(column=1,row=0)
 monthentry.insert(0,"MM")
 
-dayentry= tk.Entry(datelabel, width="4",justify="center",bg="#151e3b",fg="#ff2424",font=("Helvetica", 12))
+dayentry= tk.Entry(datelabel, width="4",justify="center",bg="#0d1224",fg="#ff2424",font=("Helvetica", 12))
 dayentry.grid(column=2,row=0)
 dayentry.insert(0,"JJ")
 
-hoursentry= tk.Entry(hourslabel, width="4",justify="center",bg="#151e3b",fg="#ff2424",font=("Helvetica", 12))
+hoursentry= tk.Entry(hourslabel, width="4",justify="center",bg="#0d1224",fg="#ff2424",font=("Helvetica", 12))
 hoursentry.grid(column=0,row=0)
 hoursentry.insert(0,"HH")
 
-minutentry= tk.Entry(hourslabel, width="4",justify="center",bg="#151e3b",fg="#ff2424",font=("Helvetica", 12))
+minutentry= tk.Entry(hourslabel, width="4",justify="center",bg="#0d1224",fg="#ff2424",font=("Helvetica", 12))
 minutentry.grid(column=1,row=0)
 minutentry.insert(0,"MM")
 
-secondentry= tk.Entry(hourslabel, width="4",justify="center",bg="#151e3b",fg="#ff2424",font=("Helvetica", 12))
+secondentry= tk.Entry(hourslabel, width="4",justify="center",bg="#0d1224",fg="#ff2424",font=("Helvetica", 12))
 secondentry.grid(column=2,row=0)
 secondentry.insert(0,"SS")
 
@@ -181,20 +177,20 @@ hoursentry.bind("<Button-1>", lambda event: hoursentry.delete(0,tk.END))
 minutentry.bind("<Button-1>", lambda event: minutentry.delete(0,tk.END))
 secondentry.bind("<Button-1>", lambda event: secondentry.delete(0,tk.END))
 
-actuelhoursbutton = tk.Button(temps,text="Temps actuel", command= actuelhours,font=("Helvetica", 12),bg="#151e3b",fg="#ff2424",activebackground='#ff2424')
-actuelhoursbutton.grid(column=0,row=1, columnspan=2)
+actuelhoursbutton = tk.Button(temps,text="Temps actuel", command= actuelhours,font=("Helvetica", 12),bg="#0d1224",fg="#ff2424",activebackground='#ff2424')
+actuelhoursbutton.grid(column=0,row=1, columnspan=2, pady=5)
 
 
 tle1label = tk.Label(tlelabel, text='TLE 1 :',bg="#151e3b",fg="#ff2424",font=("Helvetica", 12))
 tle1label.grid(column=0,row=0)
 
-tle1entry = tk.Entry(tlelabel, width="64",bg="#151e3b",fg="#ff2424",font=("Helvetica", 12))
+tle1entry = tk.Entry(tlelabel, width="64",bg="#0d1224",fg="#ff2424",font=("Helvetica", 12))
 tle1entry.grid(column=1,row=0)
 
 tle2label = tk.Label(tlelabel, text='TLE 2 :',bg="#151e3b",fg="#ff2424",font=("Helvetica", 12))
 tle2label.grid(column=0,row=1)
 
-tle2entry = tk.Entry(tlelabel, width="64",bg="#151e3b",fg="#ff2424",font=("Helvetica", 12))
+tle2entry = tk.Entry(tlelabel, width="64",bg="#0d1224",fg="#ff2424",font=("Helvetica", 12))
 tle2entry.grid(column=1,row=1)
 
 tle1entry.bind("<Button-1>", lambda event: tle1entry.delete(0,tk.END))
@@ -221,22 +217,22 @@ satelliteselector.grid(column=0,row=2,columnspan=2)
 latlabel = tk.Label(positionlabel, text='Lattitude :',bg="#151e3b",fg="#ff2424",font=("Helvetica", 12))
 latlabel.grid(column=0,row=0)
 
-latentry = tk.Entry(positionlabel, width="12",bg="#151e3b",fg="#ff2424",font=("Helvetica", 12))
+latentry = tk.Entry(positionlabel, width="12",bg="#0d1224",fg="#ff2424",font=("Helvetica", 12))
 latentry.grid(column=1,row=0)
 
 longlabel = tk.Label(positionlabel, text='Longitude :',bg="#151e3b",fg="#ff2424",font=("Helvetica", 12))
 longlabel.grid(column=0,row=1)
 
-logentry = tk.Entry(positionlabel, width="12",bg="#151e3b",fg="#ff2424",font=("Helvetica", 12))
+logentry = tk.Entry(positionlabel, width="12",bg="#0d1224",fg="#ff2424",font=("Helvetica", 12))
 logentry.grid(column=1,row=1)
 
 altlabel = tk.Label(positionlabel, text='Altitude :',bg="#151e3b",fg="#ff2424",font=("Helvetica", 12))
 altlabel.grid(column=0,row=2)
 
-altentry = tk.Entry(positionlabel, width="12",bg="#151e3b",fg="#ff2424",font=("Helvetica", 12))
+altentry = tk.Entry(positionlabel, width="12",bg="#0d1224",fg="#ff2424",font=("Helvetica", 12))
 altentry.grid(column=1,row=2)
 
-locatebutton = tk.Button(tlelabel,text="Localiser", command= localisation,font=("Helvetica", 12),bg="#151e3b",fg="#ff2424",activebackground='#ff2424')
+locatebutton = tk.Button(tlelabel,text="Localiser", command= localisation,font=("Helvetica", 12),bg="#0d1224",fg="#ff2424",activebackground='#ff2424')
 locatebutton.grid(column=0,row=3, columnspan=2)
 
 threading.Thread(target=root.mainloop()).start()
