@@ -1,5 +1,5 @@
 from skyfield.api import EarthSatellite, Topos, load
-from numpy import around
+import numpy
 import tkinter as tk
 from tkinter import ttk
 import threading
@@ -22,7 +22,10 @@ def mapping():
 # --------- fullsat.py --------- Apr.27-May.07, 2019 --------------------
 def localisation():
   ts = load.timescale()
-  timestring= str(yearentry.get()+monthentry.get()+dayentry.get()+hoursentry.get()+"h"+minutentry.get()+"m"+secondentry.get()+"s")
+  yearstring = yearentry.get()+"/"+monthentry.get()+"/"+dayentry.get()
+  daystring = hoursentry.get()+"h:"+minutentry.get()+"m:"+secondentry.get()+"s"
+  timestring= yearstring+" "+daystring
+  print(timestring)
   t = ts.utc(yearentry.get(), monthentry.get(), dayentry.get(), hoursentry.get(), minutentry.get(), secondentry.get())   # datetime selection
   # TLE twoline dbase
   line1,line2=parsedData[satelliteselector.get()]
