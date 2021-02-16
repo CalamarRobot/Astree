@@ -1,21 +1,24 @@
 from skyfield.api import EarthSatellite, Topos, load
 from numpy import around
 import tkinter as tk
+from tkinter import ttk
 import threading
 import datetime
 import pyfiglet
-
+import urllib.request
+import os
 
 def mapping():
-    with open('./stations.txt', "r") as file_object:
-        data = file_object.read()
+    data = urllib.request.urlopen("https://www.celestrak.com/NORAD/elements/stations.txt").read().decode("utf-8")
     data=data.split('\n')
+    global parsedData
     parsedData={}
     i=0
-    while i < len(data):
-        parsedData[data[i].split('  ')[0]]=[data[i+1],data[i+2]]
+    while i < len(data)-1:
+        parsedData[data[i].split('  ')[0]]=[data[i+1].replace('\r',''),data[i+2].replace('\r','')]
         i+=3
-    return parsedData
+
+
 # --------- fullsat.py --------- Apr.27-May.07, 2019 --------------------
 def localisation(years, month, day, hours, minute, second):
   ts = load.timescale()
@@ -105,9 +108,9 @@ def actuelhours():
 # ---------------------------------------
 
 try:
-    os.system("color c")
-except :
-    print("Votre systeme n'est pas compatible avec le changement de couleur de la console, pour le moment ...")
+  os.system("color c")
+except:
+  print("Votre systeme n'est pas compatible avec le changement de couleur de la console, pour le moment ...")
 
 print(pyfiglet.figlet_format("Astree", font = "cosmike"))
 print("A Calamar Industries application")
@@ -190,7 +193,26 @@ tle2label.grid(column=0,row=1)
 tle2entry = tk.Entry(tlelabel, width="60",bg="#151e3b",fg="#ff2424",font=("Helvetica", 12))
 tle2entry.grid(column=1,row=1)
 
-# satelliteselector = manque le parse , pour faire la liste des satellite dispo sur l'api
+tle1entry.bind("<Button-1>", lambda event: tle1entry.delete(0,tk.END))
+tle2entry.bind("<Button-1>", lambda event: tle2entry.delete(0,tk.END))
+
+mapping()
+def listesatellite() :
+  sateliste = []
+  for key in parsedData:
+    sateliste.append(key)
+  return sateliste
+
+def refresh(event):
+  tle1entry.delete(0, 'end')
+  tle1entry.insert(0,parsedData[event.widget.get()][0])
+  tle2entry.delete(0, 'end')
+  tle2entry.insert(0,parsedData[event.widget.get()][1])
+
+satelliteselector = ttk.Combobox(tlelabel, value=listesatellite())
+satelliteselector.current(listesatellite().index(listesatellite()[0]))
+satelliteselector.bind('<<ComboboxSelected>>', refresh)
+satelliteselector.grid(column=0,row=2,columnspan=2)
 
 latlabel = tk.Label(positionlabel, text='Lattitude :',bg="#151e3b",fg="#ff2424",font=("Helvetica", 12))
 latlabel.grid(column=0,row=0)
@@ -205,6 +227,7 @@ logentry = tk.Entry(positionlabel, width="12",bg="#151e3b",fg="#ff2424",font=("H
 logentry.grid(column=1,row=1)
 
 
+# print(mapping()["ISS (ZARYA)"])
 threading.Thread(target=root.mainloop()).start()
 # TODO : Interface :
 
