@@ -26,11 +26,11 @@ def localisation():
   daystring = hoursentry.get()+"h:"+minutentry.get()+"m:"+secondentry.get()+"s"
   timestring= yearstring+" "+daystring
   print(timestring)
-  t = ts.utc(yearentry.get(), monthentry.get(), dayentry.get(), hoursentry.get(), minutentry.get(), secondentry.get())   # datetime selection
+  t = ts.utc(int(yearentry.get()), int(monthentry.get()), float(dayentry.get()), float(hoursentry.get()), float(minutentry.get()), float(secondentry.get()))   # datetime selection
   # TLE twoline dbase
   line1,line2=parsedData[satelliteselector.get()]
 
-  loc = Topos(latentry.get(), logentry.get(), elevation_m=altentry.get())    # location coords
+  loc = Topos(latentry.get(), logentry.get())    # location coords
   satellite = EarthSatellite(line1, line2)
 
   # Geocentric
@@ -132,7 +132,7 @@ root.resizable(height="false",width="false")
 root.configure(bg="#151e3b")
 
 temps = tk.LabelFrame(root,text="Horaire",bg="#151e3b",fg="#ff2424", relief="solid",width="340",height="140",font=("Helvetica", 12))
-temps.grid_propagate(0)
+# temps.grid_propagate(0)
 temps.grid(row=0,column=0)
 
 datelabel = tk.LabelFrame(temps,text="Date de l'observation",bg="#151e3b",fg="#ff2424", relief="solid",font=("Helvetica", 11))
@@ -142,11 +142,11 @@ hourslabel = tk.LabelFrame(temps,text="Heure de l'observation",bg="#151e3b",fg="
 hourslabel.grid(column=1,row=0)
 
 tlelabel = tk.LabelFrame(root,text="TLE du satellite à observer",bg="#151e3b",fg="#ff2424", relief="solid",width="690",height="140",font=("Helvetica", 12))
-tlelabel.grid_propagate(0)
+# tlelabel.grid_propagate(0)
 tlelabel.grid(row=1,column=0,columnspan=2)
 
 positionlabel = tk.LabelFrame(root,text="Position de l'observateur",bg="#151e3b",fg="#ff2424", relief="solid",font=("Helvetica", 11),height="140",width="340")
-positionlabel.grid_propagate(0)
+# positionlabel.grid_propagate(0)
 positionlabel.grid(column=1,row=0)
 
 
