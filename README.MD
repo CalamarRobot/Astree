@@ -1,2 +1,4 @@
-## Astrée
+# Astrée
 #### Astrée est un petit utilitaire codé en python. Il vous permet de vous donner la déclinaison et l'ascensation droite qu'il vous faut rensegner dans votre monture, pour photographier un satellite a un moment donner, a partir de sa TLE actuelle.
+## Api
+#### Astrée utilise l'api Celestrak pour les satellites préselectionnables, vous pouvez la retrouver ici : https://www.celestrak.com/NORAD/elements/stations.txt,
