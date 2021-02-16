@@ -18,16 +18,16 @@ def mapping():
         parsedData[data[i].split('  ')[0]]=[data[i+1].replace('\r',''),data[i+2].replace('\r','')]
         i+=3
 
-
+# we take and modify this function(because everything we wanted to do was already inside, but a lot of the displayed information was not useful in our case) from a website (we try to retrieve it)
 # --------- fullsat.py --------- Apr.27-May.07, 2019 --------------------
-def localisation(years, month, day, hours, minute, second):
+def localisation():
   ts = load.timescale()
-  timestring= str(years+month+day+hours+"h"+minute+"m"+second+"s")
-  t = ts.utc(years, month, day, hours, minute, second)   # datetime selection
+  timestring= str(yearentry.get()+monthentry.get()+dayentry.get()+hoursentry.get()+"h"+minutentry.get()+"m"+secondentry.get()+"s")
+  t = ts.utc(yearentry.get(), monthentry.get(), dayentry.get(), hoursentry.get(), minutentry.get(), secondentry.get())   # datetime selection
   # TLE twoline dbase
-  line1,line2=calculTle()
+  line1,line2=parsedData[satelliteselector.get()]
 
-  loc = Topos('37.0328 N', '15.0650 E')    # location coords
+  loc = Topos(latentry.get(), logentry.get(), elevation_m=altentry.get())    # location coords
   satellite = EarthSatellite(line1, line2)
 
   # Geocentric
@@ -56,7 +56,7 @@ def localisation(years, month, day, hours, minute, second):
   # ------ Step 1: compute sat horizontal coords ------
   alt, az, distance = topocentric.altaz()
   if alt.degrees > 0:
-      print('\n',satellite, "\n est au dessu de l'horizon")
+    print('\n',satellite, "\n est au dessu de l'horizon")
   print ('\n Altitude= ', alt )
   print (' Azimute = ', az )
   print (' Distance=  {0:.3f}'.format(distance.km), 'km')
@@ -115,6 +115,7 @@ except:
 print(pyfiglet.figlet_format("Astree", font = "cosmike"))
 print("A Calamar Industries application")
 # Tkinter
+
 
 def clear_entry(event, entry):
     entry.delete(0, tk.END)
@@ -184,13 +185,13 @@ actuelhoursbutton.grid(column=0,row=1, columnspan=2)
 tle1label = tk.Label(tlelabel, text='TLE 1 :',bg="#151e3b",fg="#ff2424",font=("Helvetica", 12))
 tle1label.grid(column=0,row=0)
 
-tle1entry = tk.Entry(tlelabel, width="60",bg="#151e3b",fg="#ff2424",font=("Helvetica", 12))
+tle1entry = tk.Entry(tlelabel, width="64",bg="#151e3b",fg="#ff2424",font=("Helvetica", 12))
 tle1entry.grid(column=1,row=0)
 
 tle2label = tk.Label(tlelabel, text='TLE 2 :',bg="#151e3b",fg="#ff2424",font=("Helvetica", 12))
 tle2label.grid(column=0,row=1)
 
-tle2entry = tk.Entry(tlelabel, width="60",bg="#151e3b",fg="#ff2424",font=("Helvetica", 12))
+tle2entry = tk.Entry(tlelabel, width="64",bg="#151e3b",fg="#ff2424",font=("Helvetica", 12))
 tle2entry.grid(column=1,row=1)
 
 tle1entry.bind("<Button-1>", lambda event: tle1entry.delete(0,tk.END))
@@ -226,24 +227,32 @@ longlabel.grid(column=0,row=1)
 logentry = tk.Entry(positionlabel, width="12",bg="#151e3b",fg="#ff2424",font=("Helvetica", 12))
 logentry.grid(column=1,row=1)
 
+altlabel = tk.Label(positionlabel, text='Altitude :',bg="#151e3b",fg="#ff2424",font=("Helvetica", 12))
+altlabel.grid(column=0,row=2)
 
-# print(mapping()["ISS (ZARYA)"])
+altentry = tk.Entry(positionlabel, width="12",bg="#151e3b",fg="#ff2424",font=("Helvetica", 12))
+altentry.grid(column=1,row=2)
+
+locatebutton = tk.Button(tlelabel,text="Localiser", command= localisation,font=("Helvetica", 12),bg="#151e3b",fg="#ff2424",activebackground='#ff2424')
+locatebutton.grid(column=0,row=3, columnspan=2)
+
 threading.Thread(target=root.mainloop()).start()
 # TODO : Interface :
 
 #   -> bouton dynamique selecteur de couleur de police
 #   -Temps :
-#     ->Date JJ/MM/AAAA 
-#     -> Heure HH:MM:SS
-#     -> heure actuelle fonction
+#     ->Date JJ/MM/AAAA ok 
+#     -> Heure HH:MM:SS ok 
+#     -> heure actuelle fonction ok 
 # 
 #   -Satellite :
-#     ->TLE : 2 lignes
-#     ->Nom
-#     ->Selecteur d'API
+#     ->TLE : 2 lignes ok 
+#     ->Nom ok 
+#     ->Selecteur d'API ok 
 #   
 #   Localisation : (préciser le format : degré,reste exemple : 37.238779, -115.803838)
 #     ->Latitude : positif ou négatif : +=>N; -=>S
 #     ->Longitude : positif ou négatif : +=>E; -=>W
+#     -> prendre en considération l'altitude
 # 
 # 
