@@ -6,17 +6,16 @@ import datetime
 import pyfiglet
 
 
-def calculTle():
-  ##A JSON request to retrieve the current longitude and latitude of the IIS space station (real time)  
-  # url = "https://api.n2yo.com/rest/v1/satellite/tle/25544&apiKey=JYH5D7-S7XY2W-BMHDVP-4LYG"
-  # response = urllib.request.urlopen(url)
-  # result = json.loads(response.read())
-  # tle = list(result['tle'].split("\r\n")) 
-  tle = ['1 25544U 98067A   20346.55828745  .00001743  00000-0  39544-4 0  9993', '2 25544  51.6436 190.8328 0002009 119.0485 333.6039 15.49178098259518']
-  # for i in range(len(tle)):
-    # tle[i]= [element for element in tle[i].split(' ') if element!='']
-  
-  return tle
+def mapping():
+    with open('./stations.txt', "r") as file_object:
+        data = file_object.read()
+    data=data.split('\n')
+    parsedData={}
+    i=0
+    while i < len(data):
+        parsedData[data[i].split('  ')[0]]=[data[i+1],data[i+2]]
+        i+=3
+    return parsedData
 # --------- fullsat.py --------- Apr.27-May.07, 2019 --------------------
 def localisation(years, month, day, hours, minute, second):
   ts = load.timescale()
