@@ -209,7 +209,7 @@ def refresh(event):
   tle2entry.delete(0, 'end')
   tle2entry.insert(0,parsedData[event.widget.get()][1])
 
-satelliteselector = ttk.Combobox(tlelabel, value=listesatellite())
+satelliteselector = ttk.Combobox(tlelabel, value=listesatellite(), width="30")
 satelliteselector.current(listesatellite().index(listesatellite()[0]))
 satelliteselector.bind('<<ComboboxSelected>>', refresh)
 satelliteselector.grid(column=0,row=2,columnspan=2)
@@ -253,5 +253,5 @@ threading.Thread(target=root.mainloop()).start()
 #     ->Latitude : positif ou négatif : +=>N; -=>S
 #     ->Longitude : positif ou négatif : +=>E; -=>W
 #     -> prendre en considération l'altitude
-# 
+#
 # 
