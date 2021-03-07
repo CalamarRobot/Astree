@@ -29,7 +29,7 @@ def localisation():
   t = ts.utc(int(yearentry.get()), int(monthentry.get()), float(dayentry.get()), float(hoursentry.get()), float(minutentry.get()), float(secondentry.get()))   # datetime selection
   # TLE twoline dbase
   line1,line2=parsedData[satelliteselector.get()]
-  loc = Topos(latentry.get(), logentry.get(), elevation_m=altentry.get())    # location coords
+  loc = Topos(latentry.get(), logentry.get())    # location coords
   satellite = EarthSatellite(line1, line2)
 
   # Geocentric
@@ -57,6 +57,7 @@ def localisation():
   print (' Subpoint Elevation=  {0:.3f}'.format(elevation.km),'km')
   # ------ Step 1: compute sat horizontal coords ------
   alt, az, distance = topocentric.altaz()
+  # print(alt.degree)
   if alt.degrees > 0:
     print('\n',satellite, "\n est au dessu de l'horizon")
   print ('\n Altitude= ', alt )
@@ -108,11 +109,6 @@ except:
 print(pyfiglet.figlet_format("Astree", font = "cosmike"))
 print("A Calamar Industries application")
 # Tkinter
-
-
-def clear_entry(event, entry):
-    entry.delete(0, tk.END)
-    entry.unbind('<Button-1>', click_event)
 
 
 root = tk.Tk()
@@ -195,8 +191,11 @@ tle2entry.grid(column=1,row=1)
 
 tle1entry.bind("<Button-1>", lambda event: tle1entry.delete(0,tk.END))
 tle2entry.bind("<Button-1>", lambda event: tle2entry.delete(0,tk.END))
+try:
+  mapping()
+except: 
+  print("Vous n'etes pas connecté a internet !")
 
-mapping()
 def listesatellite() :
   sateliste = []
   for key in parsedData:
