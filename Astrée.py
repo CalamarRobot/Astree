@@ -1,4 +1,4 @@
-from skyfield.api import EarthSatellite, Topos, load
+from skyfield.api import EarthSatellite, wgs84 , load
 import numpy
 import tkinter as tk
 from tkinter import ttk
@@ -23,13 +23,13 @@ def mapping():
 def localisation():
   ts = load.timescale()
   yearstring = yearentry.get()+"/"+monthentry.get()+"/"+dayentry.get()
-  daystring = hoursentry.get()+"h:"+minutentry.get()+"m:"+secondentry.get()+"s"
+  daystring = hoursentry.get()+"h"+minutentry.get()+"m"+secondentry.get()+"s"
   timestring= yearstring+" "+daystring
   print(timestring)
   t = ts.utc(int(yearentry.get()), int(monthentry.get()), float(dayentry.get()), float(hoursentry.get()), float(minutentry.get()), float(secondentry.get()))   # datetime selection
   # TLE twoline dbase
   line1,line2=parsedData[satelliteselector.get()]
-  loc = Topos(latentry.get(), logentry.get())    # location coords
+  loc = wgs84.latlon(float(latentry.get()), float(logentry.get()),elevation_m=float(altentry.get()))    # location coords
   satellite = EarthSatellite(line1, line2)
 
   # Geocentric
@@ -59,10 +59,10 @@ def localisation():
   alt, az, distance = topocentric.altaz()
   # print(alt.degree)
   if alt.degrees > 0:
-    print('\n',satellite, "\n est au dessu de l'horizon")
+    print('\n',satellite, "\n est au dessus de l'horizon")
   print ('\n Altitude= ', alt )
   print (' Azimute = ', az )
-  print (' Distance=  {0:.3f}'.format(distance.km), 'km')
+  print (' Distance=  {0:.3f}km'.format(distance.km))
   #
   # ------ Step 2: compute sat RA,Dec [equinox of date] ------
   ra, dec, distance = topocentric.radec(epoch='date')
@@ -197,9 +197,8 @@ except:
   print("Vous n'etes pas connecté a internet !")
 
 def listesatellite() :
-  sateliste = []
-  for key in parsedData:
-    sateliste.append(key)
+  global parsedData
+  sateliste = [key for key in parsedData]
   return sateliste
 
 def refresh(event):
