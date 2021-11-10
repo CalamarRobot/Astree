@@ -13,10 +13,8 @@ def mapping():
     data=data.split('\n')
     global parsedData
     parsedData={}
-    i=0
-    while i < len(data)-1:
+    for i in range(0, len(data)-1, 3)
         parsedData[data[i].split('  ')[0]]=[data[i+1].replace('\r',''),data[i+2].replace('\r','')]
-        i+=3
 
 # we take and modify this function(because everything we wanted to do was already inside, but a lot of the displayed information was not useful in our case) from a website (we try to retrieve it)
 # --------- fullsat.py --------- Apr.27-May.07, 2019 --------------------
